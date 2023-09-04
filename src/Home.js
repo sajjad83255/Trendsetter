@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import HeroSection from './Components/HeroSection';
 import Services from './Components/Services';
 import Trusted from './Components/Trusted';
+import FeatureProduct from './Components/FeatureProduct';
 
 const Home = () => {
   const data ={
@@ -12,6 +13,7 @@ const Home = () => {
   return (
     <>
       <HeroSection myData={data}/>
+      <FeatureProduct/>
       <Services />
       <Trusted/>
     </>
