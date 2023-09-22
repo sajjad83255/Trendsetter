@@ -1,8 +1,116 @@
+import { useParams } from "react-router-dom";
 import styled from "styled-components";
+import { useProductContext } from "./Context/productContext";
+import { useEffect } from "react";
+import PageNavigation from "./Components/PageNavigation";
+import { Container } from "./styles/Container";
+import MyImage from "./Components/MyImage";
+import FormatPrice from "./helper/FromatPrice";
+import {TbTruckDelivery, TbReplace} from "react-icons/tb";
+import {MdSecurity} from "react-icons/md";
+import Star from "./Components/Star";
+import AddToCart from "./Components/AddToCart";
+
+
+// const API= "https://api.pujakaitem.com/api/products";
+const API = "https://trendsetter-api-g5v4.onrender.com/api/products";
 
 const SingleProduct = () => {
+
+  const {getSingleProduct, isSingleProduct, singleProduct} = useProductContext();
+
+  const {id} = useParams();
+
+  const {
+    id: alias,
+    name,
+    company,
+    price,
+    description,
+    category,
+    stock,
+    stars,
+    image,
+    reviews
+  } = singleProduct;
+
+  useEffect(() =>{
+    getSingleProduct(`${API}/${id}`);
+  },[]);
+  // console.log({id});
+  if(isSingleProduct){
+    return <div className="page_loading">Loading ......</div>
+  };
+
   return (
-    <h1>SingleProduct items</h1>
+    <Wrapper>
+      <PageNavigation title = {name}/>
+      <Container className="container">
+        <div className="grid grid-two-column">
+
+          {/* product images */}
+          <div className="product_images">
+            <MyImage img = {image}/>
+          </div>
+
+          {/* product details */}
+          <div className="product-data">
+            <h2>{name}</h2>
+            <Star stars={stars} reviews={reviews} />
+
+            {/* MRP and Deal of the day */}
+            <p className="product-data-price">
+              MRP:
+              <del>
+                <FormatPrice price = {price+250000}/>
+              </del>
+            </p>
+            <p className="product-data-price product-data-real-price">
+              Deal of The Day : <FormatPrice price={price}/>
+            </p>
+            <p>{description}</p>
+
+            {/* icons */}
+
+            <div className="product-data-warranty">
+
+              <div className="product-warranty-data">
+                <TbTruckDelivery className="warranty-icon"/>
+                <p>Free Delivery</p>
+              </div>
+              <div className="product-warranty-data">
+                <TbReplace className="warranty-icon"/>
+                <p>30 Days Replacement</p>
+              </div>
+              <div className="product-warranty-data">
+                <TbTruckDelivery className="warranty-icon"/>
+                <p>Super Free Delivery</p>
+              </div>
+              <div className="product-warranty-data">
+                <MdSecurity className="warranty-icon"/>
+                <p>2 Year Warranty</p>
+              </div>
+
+            </div>
+
+            {/* stock */}
+            <div className="product-data-info">
+              <p>Available: {stock > 0 ? "In Stock" : "Out of Stock"}</p>
+
+              <p>ID: {id}</p>
+              <p>Brand: <span>{company}</span></p>
+            </div>
+
+            {/* Color */}
+            <hr/>
+            {stock >0 && <AddToCart product={singleProduct} />}
+
+          </div>
+        </div>
+
+      </Container>
+
+    </Wrapper>
   )
 
 };
@@ -11,6 +119,12 @@ const Wrapper = styled.section`
   .container {
     padding: 9rem 0;
   }
+
+  .product_images {
+    display: flex;
+    align-items: center;
+  }
+
   .product-data {
     display: flex;
     flex-direction: column;
@@ -75,6 +189,12 @@ const Wrapper = styled.section`
     align-items: center;
   }
 
+  .page_loading {
+    font-size: 3.2rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
   @media (max-width: ${({ theme }) => theme.media.mobile}) {
     padding: 0 2.4rem;
   }

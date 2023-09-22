@@ -1,4 +1,4 @@
-import React from 'react'
+import React from 'react';
 
 const FromatPrice = ({price}) => {
   return Intl.NumberFormat("en-In", {
@@ -6,6 +6,6 @@ const FromatPrice = ({price}) => {
     currency: "INR",
     maximumFractionDigits: 2, 
   }).format(price/100);
-}
+};
 
 export default FromatPrice;

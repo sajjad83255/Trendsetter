@@ -9,12 +9,15 @@ import reducer from "../reducer/productReducer";
 const AppContext = createContext();
 
 const API = "https://trendsetter-api-g5v4.onrender.com/api/products";
+// const API = "https://api.pujakaitem.com/api/products";
 
 const initialState = {
     isLoading : false,
     isError: false,
     products : [],
     featureProducts: [],
+    isSingleLoading: false,
+    singleProduct: {},
     // for feature section those value is true in api
 }
 
@@ -48,13 +51,26 @@ const AppProvider = ({children}) => {
         } catch (error) {
             dispatch({type:"API_ERROR"});
         }
+    };
+
+    // second api call for single product
+    const getSingleProduct = async(url) => {
+        dispatch({type: "SET_SINGLE_LOADING"});
+        try {
+            const res = await axios.get(url);
+            const singleProduct = await res.data;
+            dispatch({type: "SET_SINGLE_PRODUCT", payload: singleProduct});
+        } catch (error) {
+            dispatch({type:"SET_SINGLE_ERROR"});
+        }
+        // console.log('singleproduct', singleProduct);
     }
 
     useEffect(() =>{
         getProducts(API);
     },[])
 
-    return <AppContext.Provider value={{...state}}>
+    return <AppContext.Provider value={{...state,getSingleProduct}}>
         {children}
         </AppContext.Provider>
 };
