@@ -22,7 +22,7 @@ const productReducer = (state, action) => {
             };
         case "SET_API_DATA":
             // add .myData is next line after payload
-            const featureData = action.payload.myData.filter((curElem) =>{
+            const featureData = action.payload.filter((curElem) =>{
                 return curElem.featured === true;
             });
             //console.log('FeaturedData:', featureData);
@@ -47,7 +47,7 @@ const productReducer = (state, action) => {
             return {
                 ...state,
                 isSingleLoading:false,
-                singleProduct: action.payload.detailedProduct,
+                singleProduct: action.payload,
             };
         case "SET_SINGLE_ERROR":
             return {

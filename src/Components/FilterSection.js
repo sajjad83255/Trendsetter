@@ -1,16 +1,123 @@
 import React from 'react';
 import styled from 'styled-components';
+import { useFilterContext } from '../Context/filterContext';
+import { FaCheck } from 'react-icons/fa';
+import FromatPrice from '../helper/FromatPrice';
+import { Button } from '../styles/Button';
 
 const FilterSection = () => {
+  const {filters:{text, category, company, color, maxPrice, price, minPrice},all_products, updateFilterValue, clearFilters} = useFilterContext();
+
+  // define getUniqueData
+  const getUniqueData = (data, property) =>{
+    let newVal = data.map((curElem) => {
+      return curElem[property];
+    });
+
+    // to filter array of elements
+    if(property === "colors") {
+      return newVal = ["all",...new Set([].concat(...newVal))];
+      // return newVal = newVal.flat();
+    }
+    else{
+      // to get unique data
+      return newVal = ["all", ...new Set(newVal)];
+    }
+  }
+
+  // create a function to get unique data
+  const categoryOnlyData = getUniqueData(all_products, "category");
+
+  const companyData = getUniqueData(all_products, "company");
+
+  const colorData = getUniqueData(all_products, "colors");
+
   return (
     <Wrapper>
 
+      {/* serach bar */}
       <div className="filter-search">
-        <form>
-          <input type="text" placeholder="Serach" />
+        <form onSubmit={(e) => e.preventDefault()}>
+          <input type="text" placeholder="Serach" 
+            name="text" value={text}
+            onChange={updateFilterValue}/>
         </form>
       </div>
 
+      {/* category filter */}
+      <div className="filter-category">
+        <h3>Category</h3>
+        <div>
+          {
+            categoryOnlyData.map((curElem, index) => {
+              return <button key={index} type="button" name="category" value={curElem} className={curElem === category ? "active" : ""} onClick={updateFilterValue}>
+                  {curElem}
+                </button>
+            })
+          }
+        </div>
+      </div>
+
+      {/* Company filter */}
+        <div className="filter-company">
+          <h3>Company</h3>
+          <form action="#">
+            <select name="company" id="comapny" className="filter-company--select" onClick={updateFilterValue}>
+              {
+                companyData.map((curElem, index) => {
+                  return (
+                    <option key={index} value={curElem} name="company">
+                      {curElem}
+                    </option>
+                  )
+                })
+              }
+            </select>
+          </form>
+        </div>
+
+      {/* Colour filter */}
+      <div className="filter-colors colors">
+        <h3>Colors</h3>
+        <div className="filter-color--style">
+          {
+            colorData.map((curColor, index) => {
+              if(curColor === "all"){
+                return (
+                  <button type="button" className="color-all--style" 
+                  onClick={updateFilterValue} value={curColor} key={index} name="color">
+                    all
+                  </button>
+                )
+              }
+              return(
+                <button type="button" className={color === curColor ? "btnStyle active" : "btnStyle" } style={{backgroundColor: curColor}} 
+                onClick={updateFilterValue} value={curColor} key={index} name="color">
+                  {color === curColor ? <FaCheck className="checkStyle" /> : null}
+                </button>
+              )
+            })
+          }
+        </div>
+      </div>
+
+      {/* Price filter */}
+      <div className="filter_price">
+        <h3>Price</h3>
+        <p><FromatPrice price={price}/></p>
+        <input 
+          type="range" 
+          name="price" 
+          value={price}
+          min={minPrice} 
+          max={maxPrice} 
+          onChange={updateFilterValue} />
+      </div>
+
+      {/* Clear Filter */}
+      <div className="filter-clear">
+        <Button className="btn" onClick={clearFilters}>Clear Filters</Button>
+      </div>
       
     </Wrapper>
   )
