@@ -1,10 +1,88 @@
 import styled from "styled-components";
+import { useCartContext } from "./Context/cartContext";
+import CartItem from "./Components/CartItem";
+import { NavLink } from "react-router-dom";
+import {Button} from "./styles/Button";
+import FromatPrice from "./helper/FromatPrice";
 
 const Cart = () => {
-  return (
-    <h1>Cart</h1>
-  )
+
+  const {cart, clearCart, total_price, shipping_fee} = useCartContext();
+
+  if(cart.length === 0){
+    return(
+      <EmptyDiv>
+        <h3>No item in Cart</h3>
+        <div className="cart-two-button">
+          <NavLink to = "/products">
+            <Button>Continue Shopping</Button>
+          </NavLink> 
+        </div>
+      </EmptyDiv>
+    )
+  }
+
+  return <Wrapper>
+    <div className="container">
+      <div className="cart_heading grid grid-five-column">
+        <p>item</p>
+        <p className="cart-hide">Price</p>
+        <p>Quantity</p>
+        <p className="cart-hide">Subtotal</p>
+        <p>Remove</p>
+      </div>
+      <hr />
+
+      <div className="cart-item">
+        {
+          cart.map((curElem) => {
+            return <CartItem key={curElem.id} {...curElem} />;
+          })
+        }
+      </div>
+      <hr />
+
+      <div className="cart-two-button">
+        <NavLink to = "/products">
+          <Button>Continue Shopping</Button>
+        </NavLink> 
+        <Button onClick={clearCart}>Clear Cart</Button>
+      </div>
+
+      {/* order total amount */}
+      <div className="order-total--amount">
+        <div className="order-total--subdata">
+          <div>
+            <p>Subtotal:</p>
+            <p><FromatPrice price={total_price} /></p>
+          </div>
+          <div>
+            <p>Shipping fee:</p>
+            <p><FromatPrice price={shipping_fee} /></p>
+          </div>
+          <hr />
+          <div>
+            <p>Order total:</p>
+            <p><FromatPrice price= {shipping_fee + total_price} /></p>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </Wrapper>
 };
+
+const EmptyDiv = styled.div`
+  display: grid;
+  place-items: center;
+  height: 50vh;
+
+  h3 {
+    font-size: 4.2rem;
+    text-transform: capitalize;
+    font-weight: 300;
+  }
+`;
 
 const Wrapper = styled.section`
   padding: 9rem 0;
