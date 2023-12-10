@@ -6,8 +6,8 @@ import { type } from "@testing-library/user-event/dist/type";
 const CartContext = createContext();
 
 const getLocalCartData = () => {
-    let localCartData = localStorage.getItem('trendSettersCart');
-    if(localCartData === []){
+    let localCartData = localStorage.getItem('trendSettersCart') || [];
+    if(localCartData.length === 0){
         return [];
     }
     else{
